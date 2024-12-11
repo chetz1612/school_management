@@ -1,161 +1,167 @@
-require("dotenv").config();
 const express = require("express");
+const students = require("./model/Students");
+const schools = require("./model/School");
+const sequelize = require("./sequelize");
+const app = express();
+const port = process.env.PORT || 3000;
 const { v4: uuidv4 } = require("uuid");
 
-const app = express();
-
-// database connection
-const client = require("./db");
-
-const PORT = process.env.PORT || 3000;
-
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// get all students
-app.get("/api/students", async (req, res) => {
+// Get all Schools
+app.get("/api/schools", async (req, res) => {
   try {
-    const response = await client.query("SELECT * FROM students");
-    res.json(response.rows);
+    const allSchools = await schools.findAll();
+    if (allSchools.length == 0)
+      return res.status(200).send("No Record Found...");
+    res.status(200).send(allSchools);
   } catch (error) {
     console.log("error: ", error);
-    res.status(500).send("Error");
+    res.status(500).send("Internal Server Error...");
   }
 });
 
-// create new student
-app.post("/api/students/createStudent", async (req, res) => {
-  const { firstName, lastName, email, mobileNo, age } = req.body;
-  const studId = uuidv4();
+//create new school
+app.post("/api/schools/createSchool", async (req, res) => {
   try {
-    if (age > 18) return res.status(400).send("Invalid age");
-    const response = await client.query(`
-      INSERT INTO students(
-        id, firstname, lastname, email, mobileno, age
-      ) VALUES(
-        '${studId}', '${firstName}', '${lastName}', '${email}', ${mobileNo}, ${age}
-      )`);
-    res.status(200).send("Student created successfully...");
+    const { school_name, registration_no } = req.body;
+    const newSchool = await schools.create({
+      id: uuidv4(),
+      registration_no: registration_no,
+      school_name: school_name,
+    });
+    res
+      .status(200)
+      .send(`'${newSchool.dataValues.school_name}' created successfully...`);
   } catch (error) {
-    console.log("error while creating student");
-    res.status(400).send("404: Error while creating student.");
+    console.log("Error while creating school", error);
+    res.send("Internal Server Error...");
   }
 });
 
-// remove a student
-app.delete(`/api/students/:id`, async (req, res) => {
-  try {
-    let { id } = req.params;
-    const response = await client.query(
-      `DELETE FROM students WHERE id = '${id}'`
-    );
-    if (response.rowCount == 0)
-      return res.status(404).send("Record not found...");
-    res.status(200).send("Record deleted successfully...");
-  } catch (error) {
-    console.log("Error while deleting record...");
-  }
-});
-
-// update student's details
-app.patch("/api/students/:id", async (req, res) => {
+// update the school details
+app.put("/api/schools/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const requestBody = req.body;
-    if (requestBody && Object.keys(requestBody).length > 0) {
-      let clause = Object.keys(requestBody)
-        .map((key, index) => {
-          return !["firstName", "lastName", "email"].includes(key)
-            ? `${key} = ${requestBody[key]}`
-            : `${key} = '${requestBody[key]}'`;
-        })
-        .join(", ");
-
-      const query = `UPDATE students SET ${clause} WHERE id = '${id}'`;
-      const response = await client.query(query);
-      if (response.rowCount == 1) {
-        return res.status(200).send(`Student's record updated...`);
-      } else {
-        return res.status(404).send("Record not found...");
-      }
+    const [affectedRows, updatedRows] = await schools.update(req.body, {
+      where: {
+        id: id,
+      },
+    });
+    if (affectedRows > 0) {
+      res.status(200).send("Record updated successfully...");
     } else {
-      return res.status(400).send("No fields provided for update");
+      res.send("Record not updated...");
     }
   } catch (error) {
-    return res.status(500).send("Internal Server Error...");
+    console.log("error while updating school details...", error);
   }
 });
 
-
-// get all schools
-app.get('/api/schools', async (req, res) => {
-  const query = `SELECT * FROM schools`;
-  const response = await client.query(query);
-  if(response.rowCount > 0) {
-    return res.json(response.rows)
-  } else {
-    return res.send('Record not found')
-  }
-})
-
-// delete school
-app.delete('/api/schools/:id', async (req, res) => {
-  const { id } = req.params;
-  const response = await client.query(`DELETE FROM schools WHERE id = '${id}'`)
-  if(response.rowCount == 0) return res.status(404).send('Record not found...')
-  res.status(200).send('Record deleted successfully');
-})
-
-// create new school
-app.post('/api/schools/createSchool', async (req, res)=> {
-  const { schoolName, registrationNo } = req.body;
-  const schoolId = uuidv4();
+// delete the school record
+app.delete("/api/schools/:id", async (req, res) => {
   try {
-    const query = `INSERT INTO schools (
-      id, 
-      schoolName,
-      registrationNo
-    ) VALUES (
-      '${schoolId}',
-      '${schoolName}',
-      ${registrationNo}
-    )`;
-    const response = await client.query(query);
-    res.status(200).send('New school added successfully...');    
+    const {id} = req.params;
+    const deleteSchool = await schools.destroy({
+      where: {
+        id: id
+      }
+    });
+    if(deleteSchool > 0) {
+      res.status(200).send('Record deleted successfully...');
+    } else {
+      res.status(`Record is not deleted, it might not exist or condition didn't match`)
+    }
   } catch (error) {
-    console.log('Error while creating school...', error);
-    res.status(500).send('Internal server error...')
+    console.log('Error while deleting the record: ', error);
   }
 })
 
-// update school
-app.patch('/api/schools/:id', async (req, res) => {
+// Get all students 
+app.get("/api/students", async(req, res) => {
+  try {
+    const allStudents = await students.findAll();
+    res.status(200).send(allStudents);
+  } catch (error) {
+    res.status(500).send('Internal server error...');
+  }
+})
+
+// create a new student
+app.post("/api/students/createStudent", async(req, res) => {
+  try {
+    const {first_name, last_name, email, mobile_no, school_name, age} = req.body;    
+    const newStudent = await students.create({
+      id: uuidv4(),
+      first_name: first_name,
+      last_name: last_name,
+      email: email,
+      mobile_no: mobile_no,
+      school_name: school_name,
+      age: age
+    });
+    res.status(200).send(`New student '${newStudent.dataValues.first_name}' created...`)
+  } catch (error) {
+    // res.send(500, 'Internal server error...');
+    res.status(500).send('Internal server error...');
+    console.log('Error while creating student: ', error.errors)
+  }
+})
+
+// update student's detail
+app.put("/api/students/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const requestBody = req.body;
-    if (requestBody && Object.keys(requestBody).length > 0) {
-      let clause = Object.keys(requestBody)
-        .map((key, index) => {
-          return !["schoolName"].includes(key)
-            ? `${key} = ${requestBody[key]}`
-            : `${key} = '${requestBody[key]}'`;
-        })
-        .join(", ");
-
-      const query = `UPDATE schools SET ${clause} WHERE id = '${id}'`;
-      const response = await client.query(query);
-      if (response.rowCount == 1) {
-        return res.status(200).send(`School's record updated...`);
-      } else {
-        return res.status(404).send("Record not found...");
-      }
+    const [affectedRows, updatedRows] = students.update(req.body, {
+      where: {
+        id: id
+      }      
+    });
+    if (affectedRows > 0) {
+      res.status(200).send("Student's details updated successfully...");
     } else {
-      return res.status(400).send("No fields provided for update");
+      res.send("Record not updated...");
     }
   } catch (error) {
-    return res.status(500).send("Internal Server Error...");
+    console.log(`Error while updating the student's detail: `, error);
+    res.status(500).send('Internal server error...');
+  }
+})
+
+// delete a student
+app.delete("/api/students/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleteStudent = await students.destroy({
+      where: {
+        id: id
+      }
+    });
+    if(deleteStudent > 0) {
+      res.status(200).send('Record deleted successfully...');
+    } else {
+      res.status(`Record is not deleted, it might not exist or condition didn't match`)
+    }
+  } catch (error) {
+    console.log("Error: ", error);
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
-});
+const syncSequelize = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Connection established successfully...");
+
+    await sequelize.sync({ alter: true });
+    console.log("Database synchronized...");
+
+    app.listen(port, () => {
+      console.log(`Example app listening on port ${port}!`);
+    });
+  } catch (error) {
+    console.log("error: ", error);
+  }
+};
+
+syncSequelize();
