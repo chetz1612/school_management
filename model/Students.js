@@ -22,7 +22,7 @@ const students = sequelize.define("students", {
     },
     school_id: {
         type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        allowNull: false
     },
     age: {
         type: DataTypes.INTEGER,

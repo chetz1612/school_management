@@ -11,7 +11,10 @@ const school = sequelize.define("school", {
     type: DataTypes.STRING
   },
   registration_no: {
-    type: DataTypes.INTEGER
+    type: DataTypes.STRING,
+    primaryKey: true,
+    allowNull: false,
+    unique: true
   }
 }, {
     freezeTableName: true
