@@ -3,7 +3,6 @@
   "description": "## Overview The School Management System REST API allows seamless management of schools and their associated students. It supports essential CRUD operations while ensuring proper data validation and relational integrity.",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

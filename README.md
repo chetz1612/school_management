@@ -1,72 +1,82 @@
-# School Management System - REST API
 
-## Overview
-The School Management System REST API allows seamless management of schools and their associated students. It supports essential CRUD operations while ensuring proper data validation and relational integrity. 
+# School Management
+
+'School Management System' allows seamless management of schools and their associated students. This backend system allows to perfom operation like: 'create, delete, update, get - for school and students'. 
+
+
+## Authors
+
+- [@chetz1612](https://github.com/chetz1612)
+
+
+## API Reference
+
+#### Get all schools, students
+
+```http
+  GET /school
+  GET /student
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `api_key` | `string` | **Required**. Your API key |
+
+#### Get specific school, student
+
+```http
+  GET /school/${id}
+  GET /student/${id}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `string` | **Required**. Id to fetch |
+
+#### POST create a school, student
+
+```http
+  POST /school/
+  POST /student/
+```
+
+#### PUT Update a school, student
+
+```http
+  PUT /school/${id}
+  PUT /student/${id}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `string` | **Required**. Id to update |
+
+#### DELETE Delete a school, student
+
+```http
+  DELETE /school/${id}
+  DELETE /student/${id}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `string` | **Required**. Id to delete |
+
+
 
 ## Features
+
 - Manage schools and students through RESTful API endpoints.
 - CRUD operations for both students and schools.
 - Validation for student age (must be between 1 and 18).
 - PostgreSQL database integration using the Node.js `pg` library.
 - Each school can have multiple students.
 
----
+## Installation
 
-## Entities
-### Student
-- **id**: Unique identifier for the student.
-- **firstName**: First name of the student.
-- **lastName**: Last name of the student.
-- **email**: Email address of the student.
-- **mobileNo**: Contact number of the student.
-- **age**: Age of the student (must be between 1 and 18).
-
-### School
-- **id**: Unique identifier for the school.
-- **schoolName**: Name of the school.
-- **registrationNo**: Registration number of the school.
-
----
-
-## API Endpoints
-
-### Students Endpoints
-| HTTP Method | Endpoint      | Description                             |
-|-------------|---------------|-----------------------------------------|
-| GET         | `/students`   | Retrieve all students.                 |
-| POST        | `/students`   | Add a new student (validate age).      |
-| PUT         | `/students`   | Update an existing student profile.    |
-| DELETE      | `/students`   | Remove a student.                      |
-
-### Schools Endpoints
-| HTTP Method | Endpoint      | Description                             |
-|-------------|---------------|-----------------------------------------|
-| GET         | `/school`     | Retrieve all schools.                  |
-| POST        | `/school`     | Add a new school.                      |
-| PUT         | `/school`     | Update an existing school.             |
-| DELETE      | `/school`     | Remove a school.                       |
-
----
-
-## Database
-### Technology
-- PostgreSQL is used as the database management system.
-- Node.js `pg` library is utilized for database operations.
-
-### Relationships
-- One-to-many relationship: A school can have multiple students.
-
----
-
-## Setup Instructions
-### Prerequisites
-- Node.js (version >= 14)
-- PostgreSQL
-
-### Steps
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   https://github.com/chetz1612/school_management.git
    ```
 2. Install dependencies:
    ```bash
@@ -74,11 +84,11 @@ The School Management System REST API allows seamless management of schools and 
    ```
 3. Configure database connection in the `.env` file:
    ```env
-   DB_HOST=<your-database-host>
-   DB_PORT=<your-database-port>
-   DB_USER=<your-database-user>
-   DB_PASSWORD=<your-database-password>
-   DB_NAME=<your-database-name>
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_USER=chetan
+   DB_PASSWORD='chetan123'
+   DB_NAME=mydb
    ```
 4. Run database migrations (if any):
    ```bash
@@ -88,40 +98,25 @@ The School Management System REST API allows seamless management of schools and 
    ```bash
    npm start
    ```
-6. Access the API at `http://localhost:<port>`.
+6. Access the API at `http://localhost:3000`.
+```
 
----
+# Hi, I'm Chetan Chauhan! 👋
 
-## Validation Rules
-- **Student Age**: Age must be between 1 and 18. The server will reject requests with invalid age values.
+## 🚀 About Me 
+I'm a full stack developer. 
+I have worked in many project as a Angular and React Developer.
 
----
 
-## Future Enhancements
-- Add authentication and authorization for secure access.
-- Implement pagination for large datasets.
-- Create a front-end interface for easier management.
-- Add logging and monitoring.
+## 🔗 Links
+[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/chetan-chauhan-403770107/)
 
----
+## 🛠 Skills
+HTML 
+CSS 
+Javascript 
+Typescript 
+React
+Angular 
+NodeJS
 
-## Contributing
-1. Fork the repository.
-2. Create a new feature branch:
-   ```bash
-   git checkout -b feature/<feature-name>
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m "Add <description-of-change>"
-   ```
-4. Push to the branch:
-   ```bash
-   git push origin feature/<feature-name>
-   ```
-5. Open a pull request.
-
----
-
-## License
-This project is licensed under the MIT License. See the LICENSE file for details.
