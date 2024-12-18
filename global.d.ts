@@ -7,6 +7,7 @@ declare global {
       DB_HOST: string;
       PORT: string;
       DB_DIALECT: string;
+      TOKEN_SECRET_KEY: string;
     }
   }
 }
