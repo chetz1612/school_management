@@ -3,11 +3,15 @@ import { Error } from "sequelize";
 
 const handleError = (
   res: Response,
+  statusCode: number,
   error: any,
   message = "Internal Server Error..."
 ) => {
-  console.log("error: ", error);
-  res.status(500).send(message);
+  // console.log("error: ", error);
+  res.status(statusCode).json({
+    statusCode,
+    message: message,
+  });
 };
 
 const handleSuccess = (

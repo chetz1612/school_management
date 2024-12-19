@@ -19,7 +19,7 @@ const login = async (req: Request, res: Response) => {
       token: bearerToken,
     });
   } catch (error) {
-    handleError(res, error, "Internal server error...");
+    handleError(res, 500, error, "Internal server error...");
   }
 };
 

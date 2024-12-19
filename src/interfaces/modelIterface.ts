@@ -1,10 +1,7 @@
 import { InferAttributes, InferCreationAttributes, Model } from "sequelize";
 
 interface Student
-  extends Model<
-    InferAttributes<Student>,
-    InferCreationAttributes<Student>
-  > {
+  extends Model<InferAttributes<Student>, InferCreationAttributes<Student>> {
   id: string;
   firstName: string;
   lastName: string;
@@ -13,14 +10,29 @@ interface Student
   age: number;
 }
 
-interface School
+interface SchoolInterface
   extends Model<
-    InferAttributes<School>,
-    InferCreationAttributes<School>
+    InferAttributes<SchoolInterface>,
+    InferCreationAttributes<SchoolInterface>
   > {
   id: string;
   schoolName: string;
   registrationNo: string;
 }
 
-export { Student, School };
+interface Subject
+  extends Model<InferAttributes<Subject>, InferCreationAttributes<Subject>> {
+  id: string;
+  subjectName: string;
+}
+
+interface Teacher
+  extends Model<InferAttributes<Teacher>, InferCreationAttributes<Teacher>> {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  mobileNo: number;
+}
+
+export { Student, SchoolInterface, Subject, Teacher };

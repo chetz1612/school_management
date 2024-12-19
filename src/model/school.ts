@@ -1,28 +1,36 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../database/db";
-import { School } from "../interfaces/modelIterface";
-import { ModelCtor } from "sequelize-typescript";
-import StudentModel from "./student";
+import {
+  Column,
+  DataType,
+  HasMany,
+  Model,
+  Table,
+  Unique,
+} from "sequelize-typescript";
 
-const SchoolModel = sequelize.define<School>("school", {
-  id: {
+@Table({
+  tableName: "school",
+  timestamps: false,
+})
+export class School extends Model {
+  @Column({
+    type: DataType.UUID,
     primaryKey: true,
-    type: DataTypes.UUID,
-  },
-  schoolName: {
-    type: DataTypes.STRING,
-  },
-  registrationNo: {
-    type: DataTypes.STRING,
+  })
+  id!: string;
+
+  @Column({
+    type: DataType.STRING,
     allowNull: false,
+  })
+  schoolName!: string;
+
+  @Column({
+    type: DataType.STRING,
     unique: true,
+    allowNull: false,
     primaryKey: true,
-  },
-});
+  })
+  registrationNo!: string;
+}
 
-SchoolModel.hasMany(StudentModel, {
-  sourceKey: "id",
-  foreignKey: "schoolId",
-});
-
-export default SchoolModel;
+export default School;

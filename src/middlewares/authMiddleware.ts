@@ -32,6 +32,6 @@ export const authMiddleware: any = (
     }
     next();
   } catch (error) {
-    handleError(res, error, "Internal Server Error");
+    handleError(res, 500, error, "Internal Server Error");
   }
 };
